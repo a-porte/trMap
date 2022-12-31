@@ -2,11 +2,12 @@ import treasureMap.move._
 
 class TestMove extends munit.FunSuite {
 
-  test("from String to Moves") {
-    val strMoves ="ADA"
+
+    test("from String (lower and uppercase + improper ones) to IMoves") {
+    val strMoves ="zAZdAz"
 
     val seqMove = MovesSequence.fromStringToMoves(strMoves)
 
-    assertEquals(seqMove, List(Move("A"), Move("D"), Move("A")))
+    assertEquals(seqMove, List(Move.FRONT, Move.RIGHT, Move.FRONT))
   }
 }

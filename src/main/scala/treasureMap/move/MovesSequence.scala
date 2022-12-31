@@ -14,8 +14,8 @@ object MovesSequence {
           charsList match {
             case List() => List() 
             case head :: next => 
-              head match {
-                case 'G' | 'D' | 'A' => Move(head) :: loop(next)
+              Move.values.contains(Move(head)) match {
+                case true => Move(head) :: loop(next)
                 case _ => loop(next)
               } 
           }       

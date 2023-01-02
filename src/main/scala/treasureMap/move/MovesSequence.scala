@@ -1,13 +1,13 @@
 package treasureMap.move
 
 case class MovesSequence(moves: List[Move]) {
-
+  override def toString() : String = moves.toString()
 
 }
 
 object MovesSequence {
 
-    def fromStringToMoves(seq: String) : List[Move] = { 
+    def apply(seq: String) : MovesSequence = { 
       val charsList = seq.trim().toUpperCase.toList
 
       def loop(charsList : List[Char]) : List[Move] = 
@@ -20,6 +20,6 @@ object MovesSequence {
               } 
           }       
 
-      loop(charsList)
+      new MovesSequence(loop(charsList))
     } 
-}
+  }

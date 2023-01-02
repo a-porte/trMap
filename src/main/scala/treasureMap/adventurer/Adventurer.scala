@@ -10,7 +10,8 @@ case class Adventurer(
   val name: String,
   val pos: Coordinates , 
   val orientation: String, 
-  val moves: List[Char] 
+  val moves: MovesSequence,
+  val treasures : Int =0
   ) {
 
   override def toString() : String = s"$name $pos $orientation $moves "
@@ -19,6 +20,7 @@ case class Adventurer(
 
 object Adventurer{
 
+
   def apply(line: String) : Adventurer = {
     line.replace(" ", "").split("-") match {
     case Array(name, x, y, direction, moves) => {   
@@ -26,7 +28,7 @@ object Adventurer{
       name, 
       Coordinates(x, y), 
       direction, 
-      moves.toCharArray().toList
+      MovesSequence(moves)
       )
 
     }

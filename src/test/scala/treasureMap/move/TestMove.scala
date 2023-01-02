@@ -6,8 +6,8 @@ class TestMove extends munit.FunSuite {
     test("from String (lower and uppercase + improper ones) to IMoves") {
     val strMoves ="zAZdAz"
 
-    val seqMove = MovesSequence.fromStringToMoves(strMoves)
+    val seqMove = MovesSequence(strMoves)
 
-    assertEquals(seqMove, List(Move.FRONT, Move.RIGHT, Move.FRONT))
+    assertEquals(seqMove.toString(), List(Move.FRONT, Move.RIGHT, Move.FRONT).toString())
   }
 }

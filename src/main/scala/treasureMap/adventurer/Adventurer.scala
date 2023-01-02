@@ -5,11 +5,12 @@ import treasureMap.move.MovesSequence
 import scala.util.Try
 import scala.util.Failure
 import scala.util.Success
+import treasureMap.direction.Direction
 
 case class Adventurer(
   val name: String,
   val pos: Coordinates , 
-  val orientation: String, 
+  val orientation: Direction, 
   val moves: MovesSequence,
   val treasures : Int =0
   ) {
@@ -27,7 +28,7 @@ object Adventurer{
       Adventurer(
       name, 
       Coordinates(x, y), 
-      direction, 
+      Direction(direction), 
       MovesSequence(moves)
       )
 

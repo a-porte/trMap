@@ -1,6 +1,7 @@
 import treasureMap.adventurer._
 import fr.ap.treasureMap.Coordinates
 import treasureMap.move.MovesSequence
+import treasureMap.direction.Direction
 
 class TestAdventurer extends munit.FunSuite {
 
@@ -12,7 +13,7 @@ class TestAdventurer extends munit.FunSuite {
 
     val advToComparyWith = Adventurer("Lara", 
       Coordinates(5, 2), 
-      "S", 
+      Direction("S"), 
       MovesSequence("ADAGA")
       )
 

@@ -12,19 +12,3 @@ case object Move {
 }
 
 
-
-object m extends App {
-    val l :Move = Move.RIGHT
-
-    println(l)
-
-    val m = l match {
-      case Move.RIGHT => "I'm goind right"
-      case _ => "BOOO"
-    }
-
-    println(m)
-
-    println(Move.values)
-    println(Move.values.contains(Move('L')))
-}

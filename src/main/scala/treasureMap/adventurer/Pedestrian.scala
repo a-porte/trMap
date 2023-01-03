@@ -6,7 +6,6 @@ import scala.util.{Try, Success, Failure}
 import treasureMap.direction._
 import treasureMap.move.Move
 
-import treasureMap.adventurer.Moveable
   
 case class Pedestrian (
   name: String,
@@ -14,7 +13,7 @@ case class Pedestrian (
   orientation: Direction, 
   moves: MovesSequence,
   treasures : Int =0
-  )  extends Adventurer(name, pos, orientation, moves, treasures) with MoveHandler {
+  )  extends Adventurer(name, pos, orientation, moves, treasures)  {
 
     override def copyMoveable(
       newOrientation: Direction, 

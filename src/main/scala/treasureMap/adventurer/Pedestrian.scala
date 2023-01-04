@@ -30,6 +30,11 @@ case class Pedestrian (
 }
 
 object Pedestrian{
+
+  //new apply method uses the old one, but it's rather unaethetic and wastes the patmat done in Map
+  def apply(name: String, x: String, y : String, or: String, moves: String) : Pedestrian =
+    apply(name + "-" + x + "-" + y + "-" + or + "-" + moves) 
+
   def apply(line: String) : Pedestrian = 
     line.replace(" ", "").split("-") match {
     case Array(name, x, y, direction, moves) =>  

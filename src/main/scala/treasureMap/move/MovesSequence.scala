@@ -6,9 +6,7 @@ import scala.util.Failure
 
 case class MovesSequence(moves: List[Move]) {
   override def toString() : String = moves.toString()
-  def unapply(mSeq : MovesSequence) : Option[(Move, MovesSequence)] = 
-      Some((mSeq.moves.head, MovesSequence(mSeq.moves.tail)))
-    
+  
 
   def pop() : Option[(Move, MovesSequence)] = {
       val head = Try(moves.head) 

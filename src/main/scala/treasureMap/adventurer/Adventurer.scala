@@ -3,7 +3,6 @@ package treasureMap.adventurer
 import treasureMap.coordinates.Coordinates
 import treasureMap.direction.Direction
 import treasureMap.move.MovesSequence
-import treasureMap.rules.LootDigger
 
 abstract class Adventurer(
   name: String,
@@ -11,4 +10,4 @@ abstract class Adventurer(
   orientation: Direction, 
   moves: MovesSequence,
   treasures : Int 
-  ) extends  Moveable with LootDigger 
+  ) extends  Moveable 

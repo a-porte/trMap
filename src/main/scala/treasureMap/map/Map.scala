@@ -1,16 +1,14 @@
 package treasureMap.map
 
-import scala.collection.mutable.HashMap
 
 import treasureMap.coordinates.Coordinates
-import treasureMap.adventurer.{Moveable, Pedestrian}
+import treasureMap.adventurer.{Moveable, Pedestrian, Adventurer}
 import java.io.{BufferedWriter, File, FileWriter}
-import scala.util.Failure
-import scala.util.Success
+import scala.util.{Failure, Success}
 import treasureMap.utils.FileHandler
 import scala.annotation.tailrec
 import scala.util.matching.Regex
-import treasureMap.adventurer.Adventurer
+import scala.collection.immutable
 
 
 trait Mapable {
@@ -18,27 +16,56 @@ trait Mapable {
   def width : Int
   def heigth : Int
 
-  def treasures : HashMap[Coordinates, Int]
+  def treasures : immutable.HashMap[Coordinates, Int]
 
   def adventurers : List[Moveable]
 
   def obstables : Coordinates => Boolean = 
     (posToCheck : Coordinates) => (mountains ++ adventurers.map(_.pos).to(Set))(posToCheck)
 
+  
+  val treasuresCoorFun = (posToCheck: Coordinates) => (
+    treasures.map{
+      case (coor, nb) => coor
+    }
+    .to(Set))(posToCheck)
+
   def play() : Mapable = {
     @tailrec
-    def iter(map: Mapable) : Mapable = {
-      val hasMovesLeftToPlay = !map.adventurers.filter(_.moves.moves.length > 0).isEmpty
+    def iter(recMap: Mapable) : Mapable = {
+      val hasMovesLeftToPlay = !recMap.adventurers.filter(_.moves.moves.length > 0).isEmpty
+
+      println(recMap)
 
       hasMovesLeftToPlay match {
-        case true => iter(map.copyMapable(map.adventurers.map(_.move(map.obstables))))
-        case false => map
+        case false => recMap
+
+        case true => {
+          val treasuresBeforeAdvBeingMoved = recMap.treasures
+
+          val updatedAvd : List[Moveable] = recMap.adventurers.map(
+            _.move(recMap.obstables, recMap.treasuresCoorFun)
+            )
+          
+          val updatedAdvPositions = updatedAvd.map(_.pos)
+
+          val updatedPosWithUpdatedTreasures = treasuresBeforeAdvBeingMoved.filter{
+            //firstly we want to deal with new adventurers's positions
+            case(coord, nb) => updatedAdvPositions.contains(coord)
+            }
+            .map { // then we update the number of treasures
+              case(k, v) => (k, v -1)
+            }
+
+          //treasures are contained on HashMap, so we can replace existing values on the fly thanks to ++ method
+          iter(recMap.copyMapable(updatedAvd, treasuresBeforeAdvBeingMoved ++ updatedPosWithUpdatedTreasures))
+        }
       }
     }
     iter(this)
   }
 
-  def copyMapable(m : List[Moveable]) : Mapable
+  def copyMapable(m : List[Moveable], t:  immutable.HashMap[Coordinates, Int]) : Mapable
 
   override def toString(): String = {
  
@@ -62,14 +89,17 @@ trait Mapable {
 case class PedestrianMap (
   width: Int = 0, 
   heigth: Int = 0,  
-  treasures: HashMap[Coordinates,Int] = HashMap(),
+  treasures: immutable.HashMap[Coordinates,Int] = immutable.HashMap(),
   adventurers: List[Moveable] = List(),
   mountains: Set[Coordinates] = Set()
   ) extends  Mapable {
 
-  override def copyMapable(toUpdate: List[Moveable]): Mapable = this.copy(adventurers = toUpdate)
+  override def copyMapable(advToUpdate: List[Moveable],treasuresToUpdate : immutable.HashMap[Coordinates, Int]): Mapable = {
+    this.copy(adventurers = advToUpdate, treasures = treasuresToUpdate)}
 
 }
+
+
 
 object PedestrianMap {
   private def readFile(fileName : String, funTreatment : String => Seq[String]) : Seq[String] = {

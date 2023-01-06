@@ -17,7 +17,10 @@ object MoveHandler {
     Uses two auxiliary functions to compute the next orientation or position of a Moveable
   */
 
-  def computeMove(toMove: Moveable, isOccupied:  Coordinates => Boolean ) : Moveable = {
+  def computeMove(
+    toMove: Moveable, 
+    isOccupiedFun:  Coordinates => Boolean,
+    hasLootFun : Coordinates => Boolean ) : Moveable = {
 
     def computeDirection(d: Direction, m: Move) : Direction = 
       m match {
@@ -27,7 +30,6 @@ object MoveHandler {
       }
     
     def computePos(pos: Coordinates, d: Direction) : Coordinates = {
-      //needs to enforce legal move, bool, fun ?
       val (x, y) = Coordinates.unapply(pos)
       d match {
         case EAST => Coordinates(x + 1, y)
@@ -51,7 +53,7 @@ object MoveHandler {
           case FRONT => {
             val uncheckedPos = computePos(actualPos, toMove.orientation)
 
-            val checkedPos = if (isOccupied(uncheckedPos))
+            val checkedPos = if (isOccupiedFun(uncheckedPos))
                   actualPos
                 else
                   uncheckedPos
@@ -64,8 +66,19 @@ object MoveHandler {
             newMovesSeq
             )
         }
+        
+        val hasLoot = hasLootFun(newPos)
 
-        toMove.copyMoveable(newOr, newPos, newMoves)
+
+        hasLoot match {
+          case true => toMove.copyMoveable(newOr, newPos, newMoves).digLoot()
+          case false => toMove.copyMoveable(newOr, newPos, newMoves)
+        }
+       
+        
+
+
+        
         }
       }
   }

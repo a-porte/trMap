@@ -5,6 +5,8 @@ import scala.util.Success
 import scala.util.Try
 import treasureMap.coordinates.Coordinates
 import treasureMap.direction.Direction
+import treasureMap.adventurer.Pedestrian
+import treasureMap.adventurer.Moveable
 
 
 class TestMap extends munit.FunSuite {
@@ -144,6 +146,37 @@ A - Lara - 1 - 1 - S - AADADAGGA"""
     assertEquals(indie2.orientation, Direction.NORTH)
 
 
+  }
+
+
+  test("Adv can get a loot an the map is updated") {
+    val map = PedestrianMap("inputAdvLoots.data")
+
+    val lara = map.adventurers.head
+
+    val initialsTreasures = lara.toString().reverse.head.toInt - '0'.toInt
+    val treasuresOnMap = map.treasures.map{ case (coor, nb) => nb}.reduce(_ + _)
+
+    assertEquals(initialsTreasures, 0)
+    assertEquals(lara.pos, Coordinates(1, 0))
+    assertEquals(lara.orientation, Direction.SOUTH)
+    assertEquals(treasuresOnMap, 10)
+
+
+    val newMap = map.play()
+
+
+    val newLara = newMap.adventurers.head
+    val treasures = newLara.toString().reverse.head.toInt - '0'.toInt
+    //lara is seen as Moveable and not a Pedestrian ... Variance problem ?
+    //As a consequence, we need to trick a little bit to know how many treasures she's
+    val treasuresOnNewMap = newMap.treasures.map{ case (coor, nb) => nb}.reduce(_ + _)
+
+    println(treasuresOnNewMap)
+    assertEquals(newLara.pos, Coordinates(2, 2))
+    assertEquals(newLara.orientation, Direction.EAST)
+    assertEquals(treasures, 1)
+    assertEquals(treasuresOnNewMap, 9)
   }
 
   

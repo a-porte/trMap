@@ -28,7 +28,7 @@ class TestPedestrian extends munit.FunSuite {
 
     assertEquals(adv.treasures, 0)
 
-    val advLoot = adv.digLoot
+    val advLoot = adv.digLoot()
 
     assertEquals(advLoot.treasures, 1)
 

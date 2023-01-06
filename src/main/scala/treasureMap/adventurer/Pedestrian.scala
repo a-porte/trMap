@@ -15,7 +15,7 @@ case class Pedestrian (
   treasures : Int =0
   )  extends Adventurer(name, pos, orientation, moves, treasures)  {
 
-    override def copyMoveable(
+  override def copyMoveable(
       newOrientation: Direction, 
       newPos:Coordinates, 
       newMoves: MovesSequence) : Pedestrian = 

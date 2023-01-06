@@ -10,6 +10,7 @@ import scala.util.Success
 import treasureMap.utils.FileHandler
 import scala.annotation.tailrec
 import scala.util.matching.Regex
+import treasureMap.adventurer.Adventurer
 
 
 trait Mapable {
@@ -20,6 +21,42 @@ trait Mapable {
   def treasures : HashMap[Coordinates, Int]
 
   def adventurers : List[Moveable]
+
+  def obstables : Coordinates => Boolean = 
+    (posToCheck : Coordinates) => (mountains ++ adventurers.map(_.pos).to(Set))(posToCheck)
+
+  def play() : Mapable = {
+    @tailrec
+    def iter(map: Mapable) : Mapable = {
+      val hasMovesLeftToPlay = !map.adventurers.filter(_.moves.moves.length > 0).isEmpty
+
+      hasMovesLeftToPlay match {
+        case true => iter(map.copyMapable(map.adventurers.map(_.move(map.obstables))))
+        case false => map
+      }
+    }
+    iter(this)
+  }
+
+  def copyMapable(m : List[Moveable]) : Mapable
+
+  override def toString(): String = {
+ 
+
+    val strSize = s"C - $width - $heigth\n"
+
+    val strTreasures =  treasures.map{case (coord, nb) => s"T - $coord - $nb" }.mkString("\n")
+
+    val strMountains =  mountains.map(c => "M - " + c).mkString("\n")
+
+    val strAdv = adventurers.map(_.toString()).mkString("\n")
+
+    val strMap : String = ( strSize :: strMountains :: strTreasures ::   strAdv :: Nil).mkString("\n")
+
+    strMap
+    
+  }
+  
 }
 
 case class PedestrianMap (
@@ -30,8 +67,7 @@ case class PedestrianMap (
   mountains: Set[Coordinates] = Set()
   ) extends  Mapable {
 
-
-
+  override def copyMapable(toUpdate: List[Moveable]): Mapable = this.copy(adventurers = toUpdate)
 
 }
 
@@ -69,7 +105,7 @@ object PedestrianMap {
 
           head match {
             case sizePattern(w, h) => 
-              PedestrianMap(width = w.toInt, heigth = h.toInt)
+              accu.copy(width = w.toInt, heigth = h.toInt)
               iter(next, PedestrianMap(width = w.toInt, heigth = h.toInt))
             
             case mountainPattern(x, y) => 
@@ -79,7 +115,8 @@ object PedestrianMap {
               iter(next, accu.copy(treasures = accu.treasures +(Coordinates(x, y)-> nb.toInt)) )
             
             case advPattern(name, x, y, or, moves) => 
-              iter(next, accu.copy(adventurers = List(Pedestrian(name, x, y, or, moves)))) 
+              iter(next, accu.copy(adventurers = accu.adventurers :+ Pedestrian(name, x, y, or, moves)  ))
+              // :+ appends, :: prepends
               
             case commentPattern => iter(next, accu)
           }

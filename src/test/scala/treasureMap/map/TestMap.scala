@@ -4,6 +4,7 @@ import scala.util.Failure
 import scala.util.Success
 import scala.util.Try
 import treasureMap.coordinates.Coordinates
+import treasureMap.direction.Direction
 
 
 class TestMap extends munit.FunSuite {
@@ -37,7 +38,7 @@ A - Lara - 1 - 1 - S - AADADAGGA"""
     assert(tryUnit.isSuccess)
   }
 
-    test("Can instantiate Map from file name") {
+  test("Can instantiate Map from file name") {
     val map = PedestrianMap("input.data")
 
     val posToCompareWith = Coordinates(1, 1)
@@ -47,6 +48,101 @@ A - Lara - 1 - 1 - S - AADADAGGA"""
     assertEquals(map.adventurers(0).pos, posToCompareWith)
 
     assertEquals(map.mountains, mountainsToCompareWith)
+
+  }
+
+  test("Can move Adv and avoid obstable") {
+    val map = PedestrianMap("inputAdvTowardsMountain.data")
+
+    val adv = map.adventurers.head
+
+    val mountainsToCompareWith = Set(Coordinates(1, 1))
+    assertEquals(map.mountains, mountainsToCompareWith)
+
+    assertEquals(adv.pos, Coordinates(1,0))
+
+    val advMv1 = adv.move(map.obstables)
+
+    assertEquals(advMv1.pos, Coordinates(1,0))
+
+    val advMv2 = advMv1.move(map.obstables)
+
+    val turnAdv = advMv2.move(map.obstables)
+
+    val AdvIn20 = turnAdv.move(map.obstables)
+
+    assertEquals(AdvIn20.pos, Coordinates(2,0))
+
+  }
+
+  test("Can move Adv and avoid each other") {
+    val map = PedestrianMap("inputTwoAdv.data")
+
+    val lara = map.adventurers.head
+    assertEquals(lara.pos, Coordinates(1, 1))
+    assertEquals(lara.orientation, Direction.SOUTH)
+
+
+    val indie = map.adventurers.tail.head
+    assertEquals(indie.pos, Coordinates(2, 2))
+    assertEquals(indie.orientation, Direction.NORTH)
+
+    val mapAfterOneTurn = map.copy(adventurers = List(lara.move(), indie.move()))
+
+    val lara2 = mapAfterOneTurn.adventurers.head
+    assertEquals(lara2.pos, Coordinates(1, 1))
+    assertEquals(lara2.orientation, Direction.EAST)
+
+
+    val indie2 = mapAfterOneTurn.adventurers.tail.head
+    assertEquals(indie2.pos, Coordinates(2, 1))
+    assertEquals(indie2.orientation, Direction.NORTH)
+
+    val laraImmobile = lara2.move(mapAfterOneTurn.obstables)
+    assertEquals(laraImmobile.pos, Coordinates(1, 1))
+    assertEquals(laraImmobile.orientation, Direction.EAST)
+
+  }
+
+    test("Can play Adv ") {
+    val map = PedestrianMap("inputAdvTowardsMountain.data")
+
+    val lara = map.adventurers.head
+    assertEquals(lara.pos, Coordinates(1, 0))
+    assertEquals(lara.orientation, Direction.SOUTH)
+
+    val newMap = map.play()
+
+    val laraAtTheEnd = newMap.adventurers.head
+    assertEquals(laraAtTheEnd.pos, Coordinates(2, 0))
+    assertEquals(laraAtTheEnd.orientation, Direction.EAST)
+
+  }
+
+    test("Can play 2 advs") {
+    val map = PedestrianMap("inputTwoAdvMeet.data")
+
+    val lara = map.adventurers.head
+    assertEquals(lara.pos, Coordinates(1, 1))
+    assertEquals(lara.orientation, Direction.SOUTH)
+
+
+    val indie = map.adventurers.tail.head
+    assertEquals(indie.pos, Coordinates(2, 2))
+    assertEquals(indie.orientation, Direction.NORTH)
+
+    val newMap = map.play()
+
+
+    val lara2 = newMap.adventurers.head
+    assertEquals(lara2.pos, Coordinates(1, 1))
+    assertEquals(lara2.orientation, Direction.EAST)
+
+
+    val indie2 = newMap.adventurers.tail.head
+    assertEquals(indie2.pos, Coordinates(2, 0))
+    assertEquals(indie2.orientation, Direction.NORTH)
+
 
   }
 

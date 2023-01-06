@@ -16,7 +16,8 @@ object MoveHandler {
   /*
     Uses two auxiliary functions to compute the next orientation or position of a Moveable
   */
-  def computeMove(toMove: Moveable) : Moveable = {
+
+  def computeMove(toMove: Moveable, isOccupied:  Coordinates => Boolean ) : Moveable = {
 
     def computeDirection(d: Direction, m: Move) : Direction = 
       m match {
@@ -47,11 +48,16 @@ object MoveHandler {
         val actualOrientation = toMove.orientation
 
         val (newOr, newPos, newMoves) = moveToDo match {
-          case FRONT => (
-            actualOrientation,
-            computePos(actualPos, toMove.orientation),
-            newMovesSeq
-            ) 
+          case FRONT => {
+            val uncheckedPos = computePos(actualPos, toMove.orientation)
+
+            val checkedPos = if (isOccupied(uncheckedPos))
+                  actualPos
+                else
+                  uncheckedPos
+
+            (actualOrientation, checkedPos, newMovesSeq) 
+          }
           case LEFT | RIGHT => (
             computeDirection(actualOrientation, moveToDo),
             actualPos,

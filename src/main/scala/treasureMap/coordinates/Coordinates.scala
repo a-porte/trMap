@@ -5,7 +5,7 @@ import scala.util.Success
 import scala.math.ScalaNumericConversions
 
 case class Coordinates(x: Int, y: Int) {
-  override def  toString() : String = s"($x,$y)"
+  override def  toString() : String = s"$x - $y"
 }
 
 

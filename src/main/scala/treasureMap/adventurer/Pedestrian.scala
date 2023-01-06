@@ -22,7 +22,7 @@ case class Pedestrian (
       this.copy(pos = newPos, orientation = newOrientation, moves = newMoves)
 
 
-  override def toString() : String = s"$name $pos $orientation $moves "
+  override def toString() : String = s"A - ${pos} - ${orientation.value} - $treasures"
 
   def digLoot() : Pedestrian = 
     this.copy(treasures = this.treasures + amountDiggedAtATime)

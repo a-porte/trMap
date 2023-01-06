@@ -11,6 +11,7 @@ trait Moveable extends Positionable with Orientable {
   
   def copyMoveable(orientation: Direction, position: Coordinates, moves: MovesSequence) : Moveable
   
-  def move() : Moveable = MoveHandler.computeMove(this)
+  def move(obstables: Coordinates => Boolean = _ => false) : Moveable = MoveHandler.computeMove(this, obstables)
+
   
 } 

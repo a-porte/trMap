@@ -5,7 +5,6 @@ import treasureMap.move.MovesSequence
 import treasureMap.direction._
 
 import treasureMap.coordinates.Coordinates
-import treasureMap.rules.LootDigger
 
 trait Moveable extends Positionable with Orientable  {
   val moves: MovesSequence 

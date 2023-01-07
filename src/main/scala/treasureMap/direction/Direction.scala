@@ -1,5 +1,7 @@
 package treasureMap.direction
 
+import scala.collection.immutable.HashMap
+
 sealed case class Direction(value : String)
 
 case object Direction{
@@ -8,17 +10,22 @@ case object Direction{
   object WEST extends Direction("O")
   object EAST extends Direction("E")
 
-  val values = List(WEST, NORTH, EAST, SOUTH)
+  def  values : List[Direction] = counterClockwise.map{case (k, v) => k}.toList
 
-  def getNext(d: Direction, isClockWise: Boolean) = {
-      val index = Direction.values.indexWhere(_ == d) 
+  def counterClockwise = HashMap(
+    SOUTH -> EAST,
+    EAST -> NORTH,
+    NORTH -> WEST,
+    WEST -> SOUTH
+  )
 
-      val remainder = values.length 
+  def clockwise = counterClockwise.map{case(from, to) => (to, from)}
 
-      // offset > 0 if we go clockwise, cf Direction.values definition
-      val offset = if (isClockWise) 1 else -1
-      
-      //modulus operation is used in case such as going from S to W
-      Direction.values((index +  offset) % remainder) 
-    }
+  def getNext(d: Direction, isClockWise: Boolean) = isClockWise match {
+        case true => clockwise(d)
+        case false => counterClockwise(d)
+      }
+
+    
+
 }

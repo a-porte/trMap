@@ -20,12 +20,34 @@ trait Mapable {
 
   def adventurers : List[Moveable]
 
+
+  def negativeCoord : Set[Coordinates]= (
+    for { 
+      i <- -1 until width
+      j <- -1 until heigth
+      if (i == -1 || j == -1) //|| i == len-1 || j == h-1
+     } yield Coordinates(i, j)
+    ).to(Set)
+
+  def excessiveCoord : Set[Coordinates] = (
+    for { 
+      i <- 0 until width+1
+      j <- 0 until heigth+1 
+      if i == width || j == heigth
+     } yield Coordinates(i, j)
+    ).to(Set)
+
+  def incorrectCoord : Set[Coordinates] = excessiveCoord ++ negativeCoord
+
   def obstables : Coordinates => Boolean = 
-    (posToCheck : Coordinates) => (mountains ++ adventurers.map(_.pos).to(Set))(posToCheck)
+    (posToCheck : Coordinates) => (
+      incorrectCoord ++ mountains ++ adventurers.map(_.pos).to(Set)
+      )(posToCheck)
 
   
   val treasuresCoorFun = (posToCheck: Coordinates) => (
-    treasures.map{
+    treasures.filter(_._2 > 0)
+    .map{
       case (coor, nb) => coor
     }
     .to(Set))(posToCheck)
@@ -53,8 +75,11 @@ trait Mapable {
             //firstly we want to deal with new adventurers's positions
             case(coord, nb) => updatedAdvPositions.contains(coord)
             }
+            .filter { // we want to deal with treasures count stricly above 0
+              case(k, v) => v > 0
+            }
             .map { // then we update the number of treasures
-              case(k, v) => (k, v -1)
+              case(k, v) => (k, v -1) 
             }
 
           //treasures are contained on HashMap, so we can replace existing values on the fly thanks to ++ method
@@ -70,7 +95,7 @@ trait Mapable {
   override def toString(): String = {
  
 
-    val strSize = s"C - $width - $heigth\n"
+    val strSize = s"C - $width - $heigth"
 
     val strTreasures =  treasures.map{case (coord, nb) => s"T - $coord - $nb" }.mkString("\n")
 
@@ -158,3 +183,5 @@ object PedestrianMap {
 
   }
 }
+
+

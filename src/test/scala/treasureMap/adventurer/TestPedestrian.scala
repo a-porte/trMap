@@ -105,5 +105,21 @@ class TestPedestrian extends munit.FunSuite {
 
   }
 
+  test("Adventurer can got from W to S orientation") {
+    val strAdv ="Lara - 5 - 2 - O - G"
+
+    val adv = Pedestrian(strAdv)
+
+    assertEquals(adv.pos, Coordinates(5,2))
+    assertEquals(adv.orientation, Direction.WEST)
+
+    val advStep2 = adv.move()
+
+    assertEquals(advStep2.pos, Coordinates(5,2))
+    assertEquals(advStep2.orientation, Direction.SOUTH)
+
+
+  }
+
 
 }

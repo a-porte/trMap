@@ -169,7 +169,7 @@ A - Lara - 1 - 1 - S - AADADAGGA"""
     val newLara = newMap.adventurers.head
     val treasures = newLara.toString().reverse.head.toInt - '0'.toInt
     //lara is seen as Moveable and not a Pedestrian ... Variance problem ?
-    //As a consequence, we need to trick a little bit to know how many treasures she's
+    //As a consequence, we need to trick a little bit to know how many treasures she's got
     val treasuresOnNewMap = newMap.treasures.map{ case (coor, nb) => nb}.reduce(_ + _)
 
     println(treasuresOnNewMap)

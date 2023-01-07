@@ -19,7 +19,7 @@ object MoveHandler {
 
   def computeMove(
     toMove: Moveable, 
-    isOccupiedFun:  Coordinates => Boolean,
+    isIllegalPosFun:  Coordinates => Boolean,
     hasLootFun : Coordinates => Boolean ) : Moveable = {
 
     def computeDirection(d: Direction, m: Move) : Direction = 
@@ -53,7 +53,7 @@ object MoveHandler {
           case FRONT => {
             val uncheckedPos = computePos(actualPos, toMove.orientation)
 
-            val checkedPos = if (isOccupiedFun(uncheckedPos))
+            val checkedPos = if (isIllegalPosFun(uncheckedPos))
                   actualPos
                 else
                   uncheckedPos

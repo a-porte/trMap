@@ -149,7 +149,7 @@ A - Lara - 1 - 1 - S - AADADAGGA"""
   }
 
 
-  test("Adv can get a loot an the map is updated") {
+  test("Adv can get a loot and the map is updated") {
     val map = PedestrianMap("inputAdvLoots.data")
 
     val lara = map.adventurers.head
@@ -177,6 +177,51 @@ A - Lara - 1 - 1 - S - AADADAGGA"""
     assertEquals(newLara.orientation, Direction.EAST)
     assertEquals(treasures, 1)
     assertEquals(treasuresOnNewMap, 9)
+  }
+
+  test("Adv cannot leave the map") {
+    val map = PedestrianMap("inputOffBoard.data")
+
+    val lara = map.adventurers.head
+
+    assertEquals(lara.pos, Coordinates(1, 0))
+    assertEquals(lara.orientation, Direction.WEST)
+
+    val newMap = map.play()
+
+    val newLara = newMap.adventurers.head
+
+    assertEquals(newLara.pos, Coordinates(0, 0))
+    assertEquals(newLara.orientation, Direction.NORTH)
+
+  }
+
+  test("Adv can get a loot and the map is updated") { //KO atm
+    val map = PedestrianMap("inputAdvDoesNotLootTwice.data")
+
+    val lara = map.adventurers.head
+
+    val initialsTreasures = lara.toString().reverse.head.toInt - '0'.toInt
+    val treasuresOnMap = map.treasures.map{ case (coor, nb) => nb}.reduce(_ + _)
+
+    assertEquals(initialsTreasures, 0)
+    assertEquals(lara.pos, Coordinates(1, 0))
+    assertEquals(lara.orientation, Direction.SOUTH)
+    assertEquals(treasuresOnMap, 5)
+
+
+    val newMap = map.play()
+
+    val newLara = newMap.adventurers.head
+    val treasures = newLara.toString().reverse.head.toInt - '0'.toInt
+   
+    val treasuresOnNewMap = newMap.treasures.map{ case (coor, nb) => nb}.reduce(_ + _)
+
+    println(treasuresOnNewMap)
+    assertEquals(newLara.pos, Coordinates(1, 2))
+    assertEquals(newLara.orientation, Direction.SOUTH)
+    assertEquals(treasures, 1)
+    assertEquals(treasuresOnNewMap, 4)
   }
 
   

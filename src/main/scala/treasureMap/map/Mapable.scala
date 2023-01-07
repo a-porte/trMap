@@ -5,6 +5,7 @@ import scala.collection.immutable
 import treasureMap.coordinates.Coordinates
 import scala.annotation.tailrec
 import treasureMap.adventurer.MoveHandler
+import treasureMap.utils.FileHandler
 
 
 
@@ -115,6 +116,10 @@ trait Mapable {
     s"$strMap\n"
     
   }
+
+
+  def writeToFile(fileName : String) =
+    FileHandler.writeLineInFile(FileHandler.resourcesPath + fileName, this.toString())
 
 
 }

@@ -5,6 +5,8 @@ import scala.util.Using
 import scala.util.Try
 
 object FileHandler {
+
+  def resourcesPath = "src/main/resources/"
   
   def writeLineInFile(name: String, line: String) : Try[Unit] = {
     Try {

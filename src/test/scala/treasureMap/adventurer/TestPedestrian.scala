@@ -1,4 +1,5 @@
 
+import treasureMap.adventurer.Moveable
 import treasureMap.coordinates._
 import treasureMap.adventurer._
 import treasureMap.move.MovesSequence

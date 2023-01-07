@@ -17,7 +17,7 @@ trait Moveable extends Positionable with Orientable  {
     hasLoot: Coordinates => Boolean = _ => false) : Moveable =
        MoveHandler.computeMove(this, obstables, hasLoot)
 
-  def amountDiggedAtATime = 1 // may be overriden
+  def amountDiggedAtATime = MoveHandler.amountDiggedAtATime 
 
   def digLoot() : Moveable
 } 

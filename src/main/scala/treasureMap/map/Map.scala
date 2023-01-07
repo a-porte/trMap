@@ -9,9 +9,12 @@ import treasureMap.utils.FileHandler
 import scala.annotation.tailrec
 import scala.util.matching.Regex
 import scala.collection.immutable
+import treasureMap.adventurer.MoveHandler
+
 
 
 trait Mapable {
+
   def mountains : Set[Coordinates]
   def width : Int
   def heigth : Int
@@ -25,7 +28,7 @@ trait Mapable {
     for { 
       i <- -1 until width
       j <- -1 until heigth
-      if (i == -1 || j == -1) //|| i == len-1 || j == h-1
+      if (i == -1 || j == -1) 
      } yield Coordinates(i, j)
     ).to(Set)
 
@@ -44,8 +47,7 @@ trait Mapable {
       incorrectCoord ++ mountains ++ adventurers.map(_.pos).to(Set)
       )(posToCheck)
 
-  
-  val treasuresCoorFun = (posToCheck: Coordinates) => (
+    val treasuresCoorFun = (posToCheck: Coordinates) => (
     treasures.filter(_._2 > 0)
     .map{
       case (coor, nb) => coor
@@ -69,17 +71,29 @@ trait Mapable {
             _.move(recMap.obstables, recMap.treasuresCoorFun)
             )
           
-          val updatedAdvPositions = updatedAvd.map(_.pos)
+          val advInitialPos = recMap.adventurers.map(_.pos)
+          val updatedAdvPositions = updatedAvd.map(_.pos) 
+
+          val changedPositions = (
+            (
+              advInitialPos zip updatedAdvPositions // we zip together positions before and after moves
+              ) filter {
+              case (ini, updated) => ini != updated // we only keep the position which have been changed
+              }
+            ) 
+            .map {
+              case (ini, updated) => updated // and we unzip then
+            } 
 
           val updatedPosWithUpdatedTreasures = treasuresBeforeAdvBeingMoved.filter{
-            //firstly we want to deal with new adventurers's positions
-            case(coord, nb) => updatedAdvPositions.contains(coord)
+            //firstly we want to deal exclusively with new adventurers's positions
+            case(coord, nb) => changedPositions.contains(coord)
             }
             .filter { // we want to deal with treasures count stricly above 0
               case(k, v) => v > 0
             }
             .map { // then we update the number of treasures
-              case(k, v) => (k, v -1) 
+              case(k, v) => (k, v - MoveHandler.amountDiggedAtATime) 
             }
 
           //treasures are contained on HashMap, so we can replace existing values on the fly thanks to ++ method
@@ -93,9 +107,7 @@ trait Mapable {
   def copyMapable(m : List[Moveable], t:  immutable.HashMap[Coordinates, Int]) : Mapable
 
   override def toString(): String = {
- 
-
-    val strSize = s"C - $width - $heigth"
+      val strSize = s"C - $width - $heigth"
 
     val strTreasures =  treasures.map{case (coord, nb) => s"T - $coord - $nb" }.mkString("\n")
 
@@ -105,10 +117,11 @@ trait Mapable {
 
     val strMap : String = ( strSize :: strMountains :: strTreasures ::   strAdv :: Nil).mkString("\n")
 
-    strMap
+    s"$strMap\n"
     
   }
-  
+
+
 }
 
 case class PedestrianMap (
@@ -119,7 +132,7 @@ case class PedestrianMap (
   mountains: Set[Coordinates] = Set()
   ) extends  Mapable {
 
-  override def copyMapable(advToUpdate: List[Moveable],treasuresToUpdate : immutable.HashMap[Coordinates, Int]): Mapable = {
+  override def copyMapable(advToUpdate: List[Moveable],treasuresToUpdate : immutable.HashMap[Coordinates, Int]): PedestrianMap = {
     this.copy(adventurers = advToUpdate, treasures = treasuresToUpdate)}
 
 }

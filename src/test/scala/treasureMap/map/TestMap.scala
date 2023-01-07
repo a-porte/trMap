@@ -223,6 +223,7 @@ A - Lara - 1 - 1 - S - AADADAGGA"""
     assertEquals(treasures, 1)
     assertEquals(treasuresOnNewMap, 4)
   }
+  
 
   
 }

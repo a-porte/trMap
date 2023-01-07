@@ -12,6 +12,8 @@ import treasureMap.coordinates.Coordinates
 import treasureMap.direction.Direction
 
 object MoveHandler {
+
+  def amountDiggedAtATime = 1
  
   /*
     Uses two auxiliary functions to compute the next orientation or position of a Moveable
@@ -71,14 +73,10 @@ object MoveHandler {
 
 
         hasLoot match {
-          case true => toMove.copyMoveable(newOr, newPos, newMoves).digLoot()
-          case false => toMove.copyMoveable(newOr, newPos, newMoves)
+          case true  if newPos != actualPos => toMove.copyMoveable(newOr, newPos, newMoves).digLoot()
+          case false | true => toMove.copyMoveable(newOr, newPos, newMoves)
         }
-       
-        
 
-
-        
         }
       }
   }

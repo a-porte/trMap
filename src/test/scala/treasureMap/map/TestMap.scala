@@ -196,7 +196,7 @@ A - Lara - 1 - 1 - S - AADADAGGA"""
 
   }
 
-  test("Adv can get a loot and the map is updated") { //KO atm
+  test("Adv can get a loot and the map is updated") { 
     val map = PedestrianMap("inputAdvDoesNotLootTwice.data")
 
     val lara = map.adventurers.head

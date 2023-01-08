@@ -6,6 +6,9 @@ import treasureMap.coordinates.Coordinates
 import scala.annotation.tailrec
 import treasureMap.adventurer.MoveHandler
 import treasureMap.utils.FileHandler
+import scala.util.Failure
+import scala.util.Success
+import java.io.IOException
 
 
 
@@ -55,8 +58,6 @@ trait Mapable {
     def iter(recMap: Mapable) : Mapable = {
       val hasMovesLeftToPlay = !recMap.adventurers.filter(_.moves.moves.length > 0).isEmpty
 
-      println(recMap)
-
       hasMovesLeftToPlay match {
         case false => recMap
 
@@ -103,7 +104,7 @@ trait Mapable {
   def copyMapable(m : List[Moveable], t:  immutable.HashMap[Coordinates, Int]) : Mapable
 
   override def toString(): String = {
-      val strSize = s"C - $width - $heigth"
+    val strSize = s"C - $width - $heigth"
 
     val strTreasures =  treasures.map{case (coord, nb) => s"T - $coord - $nb" }.mkString("\n")
 
@@ -118,8 +119,11 @@ trait Mapable {
   }
 
 
-  def writeToFile(fileName : String) =
-    FileHandler.writeLineInFile(FileHandler.resourcesPath + fileName, this.toString())
+  def writeToFile(fileName : String) : Unit =
+    FileHandler.writeLineInFile(FileHandler.resourcesPath + fileName, this.toString()) match {
+      case Failure(exception) => throw new IOException(exception)
+      case Success(value) => None
+    }
 
 
 }

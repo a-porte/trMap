@@ -1,15 +1,4 @@
 
-//ThisBuild / scalaVersion := "2.13.6"
-//ThisBuild / organization := "fr.teddubi"
-
-/*lazy val hello = (project in file("."))
-  .settings(
-      name := "Hello",
-      libraryDependencies += "org.scalatest" %% "scalatest" %  "3.2.7" % Test,
-   )
-*/
-
-
 scalaVersion := "2.13.8"
 name := "treasure map"
 organization := "fr.AP"
